@@ -1,0 +1,44 @@
+1. Diferencias entre pruebas unitarias, de integración y E2E
+Respuesta: 
+Pruebas Unitarias: prueban componentes individuales, pueden ser metodos o funciones.
+un ejemplo puede ser una función que calcula el precio del costo de envio de un paquete
+
+Pruebas de integración: como lo dice el nombre prueban la interacción entre los componentes, se comprueba si al unir un nuevo modulo no se daña algo de otro.
+un ejemplo podría ser probar la conexión entre un API y una base de datos.
+
+Pruebas E2E: Prueba todo el sistema de principio a fina y son las más lentaas de ejecutar.
+un ejemplo podría ser probar la generación de una guía hasta la entrega al vendedor
+
+2. ¿Qué es un framework de automatización de pruebas? Mencione ejemplos que haya
+utilizado.
+
+en términos sencillos es como una caja de herramientas que nos permite hacer pruebas más facilmente,
+Playwright: lo use para haer la prueba tecnica, se me hace que es sencillo
+Selenium: es uno de los más usadados en la actualidad.
+Cypress: Muy amigable para principiantes, como un juego de LEGO bien organizado
+Robot Framework: Muy sencillo de entender y manejarlo.
+
+3. Defina el concepto de "Pirámide de Pruebas" y su importancia.
+La Pirámide de Pruebas es un modelo conceptual que representa la estructura ideal para organizar diferentes tipos de pruebas en el desarrollo de software.
+es fundamental porque proporciona una guía clara para estructurar la estrategia de pruebas, asegurando calidad mientras se optimizan recursos y tiempo.
+
+4. ¿Qué es la sincronización en pruebas automatizadas y por qué es esencial?
+La sincronización en pruebas automatizadas es el proceso de coordinar el tiempo de ejecución de las pruebas con el estado de la aplicación bajo prueba. 
+Es decir, se asegura de que las pruebas interactúen con los elementos de la aplicación en el momento adecuado, evitando errores y fallas debido a tiempos de carga o procesos asíncrono
+
+5. ¿Cómo integraría pruebas automatizadas en un proceso de integración continua (CI)?
+depende, porque si es si se está manejando github se podría integrar con los actions y configurar el action para que ejecute la prueba cada vez que se haga un desligue sobre el componente.
+
+6. Discuta las diferencias entre pruebas de carga y de estrés, proporcionando ejemplos.
+según lo que he realizado en este tipo de pruebas, puedo decir que las pruebas de carga es ejecutar una prueba a una api en particular con un número de usuarios que se estima que puede ser una media 
+dentro del sitio, mientras que las pruebas de estrés nos permiten ir más allá y ver cómo se comporta el sistema cuando lo sometemos a diferentes usuarios o número de operaciones ejecutandose al tiempo,
+estas pruebas de estrés nos permiten entender hasta donde puede llegar a soportar nuestro sitio.
+
+7.Cómo gestionaría la automatización de pruebas para una aplicación web con
+componentes dinámicos?
+En este caso no tengo el conocimiento claro de cómo podría hacerlo, pero es tema de investigarlo y aplicarlo.
+
+7. Explique la importancia de gestionar dependencias en la automatización de pruebas y
+cómo hacerlo en frameworks como Maven o Gradle.
+
+La gestión de dependencias en la automatización de pruebas es esencial para garantizar que todos los componentes necesarios estén disponibles, en la versión adecuada y funcionando de manera coherente
