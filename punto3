@@ -1,0 +1,133 @@
+
+const playwright = require('@playwright/test');
+const { test, expect } = playwright;
+
+// Datos de prueba
+const datosBasicos = {
+    direccion: "Cl 10 # 20 30",
+    fechaRecogida: "2024-10-30",
+    nombreEntrega: "Juan",
+    apellidosEntrega: "Pérez",
+    celularEntrega: "3001234567",
+    emailUsuario: "juan@email.com",
+    descripcionTipoVia: "Calle",
+    aplicativo: "envios"
+};
+
+const validaciones = {
+    // Verifica si una dirección tiene caracteres válidos
+    esDireccionValida: (direccion) => {
+        return direccion && direccion.length > 0 && !direccion.includes('@#$%');
+    },
+
+    // Verifica si una fecha es válida y está dentro de 5 días hábiles
+    esFechaValida: (fecha) => {
+        const fechaActual = new Date();
+        const fechaIngresada = new Date(fecha);
+        const diferenciaDias = Math.floor((fechaIngresada - fechaActual) / (1000 * 60 * 60 * 24));
+        return diferenciaDias >= 0 && diferenciaDias <= 5;
+    },
+
+    // Verifica que todos los campos requeridos estén presentes
+    camposCompletos: (datos) => {
+        const camposRequeridos = [
+            'direccion',
+            'fechaRecogida',
+            'nombreEntrega',
+            'apellidosEntrega',
+            'celularEntrega',
+            'emailUsuario',
+            'descripcionTipoVia',
+            'aplicativo'
+        ];
+        
+        return camposRequeridos.every(campo => datos[campo]);
+    }
+};
+
+test.describe('Pruebas de Solicitud de Recogida', () => {
+    
+    test('Crear una solicitud válida de recogida', async ({ request }) => {
+       
+        const datos = {
+            ...datosBasicos,
+            tipoEnvio: "1",
+            tipoProducto: "4",
+            medidasAproximadas: [{
+                id: 2,
+                tipoPaq: "Par de zapatos",
+                cantidad: 1
+            }]
+        };
+
+        // se verifica que los datos sean válidos
+        expect(validaciones.esDireccionValida(datos.direccion), 
+            'La dirección debe ser válida').toBeTruthy();
+            
+        expect(validaciones.esFechaValida(datos.fechaRecogida), 
+            'La fecha debe estar dentro de 5 días hábiles').toBeTruthy();
+            
+        expect(validaciones.camposCompletos(datos), 
+            'Todos los campos requeridos deben estar completos').toBeTruthy();
+
+        // se envia la solicitud al API
+        const respuesta = await request.post(
+            'https://apiv2-test.coordinadora.com/recogidas/cm-solicitud-recogidas-ms/solicitud-recogida',
+            {
+                data: datos,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        // se verifica que todo salió bien
+        expect(respuesta.ok()).toBeTruthy();
+        const resultado = await respuesta.json();
+        expect(resultado).toBeDefined();
+    });
+
+    test('Validar rechazo de solicitud con datos incompletos', async ({ request }) => {
+        // Datos incompletos a propósito
+        const datosIncompletos = {
+            direccion: "Cl 10 # 20 30",
+            // Falta fechaRecogida y otros campos obligatorios
+        };
+
+        const respuesta = await request.post(
+            'https://apiv2-test.coordinadora.com/recogidas/cm-solicitud-recogidas-ms/solicitud-recogida',
+            {
+                data: datosIncompletos,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        // se verifica que la solicitud fue rechazada
+        expect(respuesta.status()).toBe(400);
+    });
+
+    test('Validar rechazo de solicitud con fecha inválida', async ({ request }) => {
+        const datosConFechaInvalida = {
+            ...datosBasicos,
+            fechaRecogida: "2024-12-31" // Fecha muy lejana
+        };
+
+        // Primero se verifica que la fecha sea inválida
+        expect(validaciones.esFechaValida(datosConFechaInvalida.fechaRecogida)).toBeFalsy();
+
+        const respuesta = await request.post(
+            'https://apiv2-test.coordinadora.com/recogidas/cm-solicitud-recogidas-ms/solicitud-recogida',
+            {
+                data: datosConFechaInvalida,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        //  se verifica que la solicitud fue rechazada
+        expect(respuesta.status()).toBe(400);
+    });
+});
