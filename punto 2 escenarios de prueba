@@ -139,3 +139,8 @@ Resultado Esperado:
 Rechazo de fechas fuera del rango permitido
 Mensaje claro indicando el rango de fechas válido
 Solo se permiten fechas hábiles dentro del rango
+
+Estrategía de automatización
+
+1.Primero validar pruebas unitarias para validar la lógica de negocio individual de cada componente.
+2.crear scripts de automatización de los escenarios que ya se plantearon, teniendo en cuenta que ya tenemos unas pruebas unitarias.
