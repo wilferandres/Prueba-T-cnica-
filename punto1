@@ -1,0 +1,79 @@
+1.  Determine el valor total que recibirán los empleados del departamento 3000 en su
+próximo pago, que incluye un reconocimiento adicional único de $500.000. El pago
+regular se compone de salario y comisión. La información debe estar ordenada
+alfabéticamente por empleado.
+
+SELECT 
+    e.nomEmp,
+    e.salEmp,
+    e.comisionE,
+    (e.salEmp + COALESCE(e.comisionE, 0) + 500000) as pago_total
+FROM 
+    Empleados e
+WHERE 
+    e.codDpto = '3000'
+ORDER BY 
+    e.nomEmp ASC;
+
+2. Identifique los departamentos que tienen más de 3 empleados y el número de
+empleados en cada uno. Ordene los resultados de mayor a menor cantidad de
+empleados.
+
+SELECT 
+    e.codDpto,
+    COUNT(*) as numero_empleados
+FROM 
+    Empleados e
+GROUP BY 
+    e.codDpto
+HAVING 
+    COUNT(*) > 3
+ORDER BY 
+    numero_empleados DESC;
+
+3. Verifique si existen empleados que no estén asignados a algún departamento existente.
+
+SELECT 
+    e.nDIEmp,
+    e.nomEmp
+FROM 
+    Empleados e
+WHERE 
+    e.codDpto NOT IN (
+        SELECT DISTINCT codDpto 
+        FROM Empleados 
+        WHERE codDpto IS NOT NULL
+    )
+    OR e.codDpto IS NULL;
+
+  4. Encuentre el departamento con la nómina total más alta, considerando salario y
+comisión.
+  
+SELECT e.codDpto, SUM(e.salEmp + COALESCE(e.comisionE, 0)) as nomina_total
+FROM 
+    Empleados e
+GROUP BY 
+    e.codDpto
+ORDER BY 
+    nomina_total DESC
+LIMIT 1;
+
+5. Identifique los tres directores con más personas a cargo.
+
+SELECT 
+    j.nomEmp as director,
+    COUNT(*) as personas_a_cargo
+FROM 
+    Empleados e
+JOIN 
+    Empleados j ON e.jefeID = j.nDIEmp
+WHERE 
+    j.cargoE LIKE '%Director%'
+GROUP BY 
+    j.nDIEmp, j.nomEmp
+ORDER BY 
+    personas_a_cargo DESC
+LIMIT 3;
+
+6. Determine el salario promedio general de la empresa, así como el departamento con el
+salario promedio más alto y el valor correspondiente
