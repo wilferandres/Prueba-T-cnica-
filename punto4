@@ -1,1 +1,114 @@
+pruebas automatizadas
 
+escenarios de  pruebas 
+
+Scenario: Validar creación exitosa de solicitud de recogida con días hábiles
+  Given que tengo una solicitud de recogida válida
+  When envío la solicitud con fecha "2024-10-30"
+  Then debería recibir un código de respuesta 200
+  And el mensaje de respuesta debe indicar "Solicitud creada exitosamente"
+
+Scenario: Validar duplicidad de solicitudes
+  Given que existe una solicitud previa para "Cl 10 # 20 30" en "2024-10-30"
+  When envío una nueva solicitud con la misma dirección y fecha
+  Then debería recibir un código de respuesta 400
+  And el mensaje debe indicar "Ya existe una solicitud para esta dirección y fecha"
+
+Scenario: Validar caracteres alfanuméricos en campos requeridos
+  Given que tengo una solicitud con caracteres especiales
+  When envío la solicitud con dirección "@#$%"
+  Then debería recibir un código de respuesta 400
+  And el mensaje debe indicar "La dirección contiene caracteres no válidos"
+
+
+automatización con playwright
+
+// coordinadora.js
+const { test, expect } = require('@playwright/test');
+const axios = require('axios');
+
+const baseURL = 'https://apiv2-test.coordinadora.com/recogidas/cm-solicitud-recogidas-ms/solicitud-recogida';
+
+test.describe('Pruebas de Solicitud de Recogida', () => {
+    let solicitudBase;
+
+    test.beforeEach(() => {
+        
+        solicitudBase = {
+            "tipoEnvio": "1",
+            "direccion": "Cl 10 # 20 30",
+            "fechaRecogida": "2024-10-30",
+            "nombreEntrega": "prueba",
+            "apellidosEntrega": "prueba1",
+            "celularEntrega": "3045677777",
+            "emailUsuario": "test@test.com",
+            "descripcionTipoVia": "Kilómetro",
+            "aplicativo": "envios"
+        };
+    });
+
+    test('Validar creación exitosa de solicitud', async () => {
+        const response = await axios.post(baseURL, solicitudBase);
+        expect(response.status).toBe(200);
+        expect(response.data.message).toContain('exitosamente');
+    });
+
+    test('Validar solicitud duplicada', async () => {
+        // Primera solicitud
+        await axios.post(baseURL, solicitudBase);
+
+        // Intentar crear solicitud duplicada
+        try {
+            await axios.post(baseURL, solicitudBase);
+        } catch (error) {
+            expect(error.response.status).toBe(400);
+            expect(error.response.data.message).toContain('Ya existe una solicitud');
+        }
+    });
+
+    test('Validar caracteres alfanuméricos', async () => {
+        const solicitudInvalida = {
+            ...solicitudBase,
+            direccion: '@#$%'
+        };
+
+        try {
+            await axios.post(baseURL, solicitudInvalida);
+        } catch (error) {
+            expect(error.response.status).toBe(400);
+            expect(error.response.data.message).toContain('caracteres no válidos');
+        }
+    });
+});
+
+// playwright.config.js
+const config = {
+  reporter: [
+    ['html', { outputFolder: 'playwright-report' }],
+    ['json', { outputFile: 'results.json' }]
+  ],
+  testDir: './tests',
+  timeout: 30000,
+  use: {
+    baseURL: 'https://apiv2-test.coordinadora.com',
+  },
+};
+
+module.exports = config;
+
+// package.json
+{
+  "scripts": {
+    "test": "playwright test",
+    "test:report": "playwright show-report"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.40.0",
+    "axios": "^1.6.0",
+    "@cucumber/cucumber": "^7.3.2"
+  }
+}
+//comandos para correr la prueba
+npm install
+npm run test
+npm run test:report
