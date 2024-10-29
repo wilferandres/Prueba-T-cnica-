@@ -1,0 +1,141 @@
+Plan de Pruebas Funcionales - Solicitud de Recogida
+
+1. Escenarios de Prueba Manual
+
+Escenario 1: Creación exitosa de solicitud de recogida
+Objetivo: Verificar que se puede crear una solicitud de recogida con todos los campos válidos.
+
+Precondiciones:
+
+Usuario con acceso al sistema
+No existen solicitudes duplicadas para la fecha y dirección
+
+Pasos:
+
+Ingresar al formulario de solicitud de recogida
+Completar campos obligatorios:
+
+Dirección: "Calle 10 # 20-30"
+Fecha de Recogida: [fecha dentro de 5 días hábiles]
+Nombre Entrega: "Juan"
+Apellidos Entrega: "Pérez"
+Celular Entrega: "3001234567"
+Email Usuario: "juan@email.com"
+Descripción Tipo Vía: "Calle"
+Aplicativo: "envios"
+
+
+Enviar solicitud
+
+Resultado Esperado:
+
+Solicitud creada exitosamente
+Mensaje de confirmación
+Código de respuesta 200
+
+
+
+
+Escenario 2: Validación de campos obligatorios
+
+
+Objetivo: Verificar que el sistema valida correctamente los campos obligatorios.
+Precondiciones:
+
+Usuario con acceso al sistema
+
+Pasos:
+
+Ingresar al formulario de solicitud
+Dejar en blanco campos obligatorios selectivamente
+Intentar enviar la solicitud
+
+Resultado Esperado:
+
+Mensaje de error para cada campo obligatorio faltante
+No se permite el envío del formulario
+Indicación visual de campos requeridos
+
+
+
+
+Escenario 3: Detección de solicitudes duplicadas
+
+
+Objetivo: Verificar que el sistema detecta y previene solicitudes duplicadas.
+Precondiciones:
+
+Existe una solicitud previa para la dirección "Calle 10 # 20-30" en la fecha "2024-10-30"
+
+Pasos:
+
+Intentar crear una nueva solicitud con:
+
+Misma dirección
+Misma fecha de recogida
+
+
+Completar resto de campos
+Enviar solicitud
+
+Resultado Esperado:
+
+Mensaje de error indicando duplicidad
+Solicitud rechazada
+Código de error apropiado
+
+
+
+Escenario 4: Validación de formato de campos
+
+
+Objetivo: Verificar que el sistema valida correctamente el formato de todos los campos.
+Precondiciones:
+
+Usuario con acceso al sistema
+
+Pasos:
+
+Ingresar datos con formatos inválidos:
+
+Email: "correoInvalido"
+Celular: "abc123"
+Fecha: "2024/13/45"
+
+
+Intentar enviar solicitud
+
+Resultado Esperado:
+
+Mensajes de error específicos para cada formato inválido
+No se permite el envío del formulario
+Indicación visual de campos con error
+
+
+
+Escenario 5: Validación de fechas hábiles
+
+
+Objetivo: Verificar que solo se permiten fechas dentro de los próximos 5 días hábiles.
+Precondiciones:
+
+Usuario con acceso al sistema
+
+Pasos:
+
+Intentar crear solicitudes con:
+
+Fecha actual
+Fecha después de 5 días hábiles
+Fecha en fin de semana
+Fecha en día festivo
+
+
+Completar resto de campos válidos
+Intentar enviar cada solicitud
+
+Resultado Esperado:
+
+Rechazo de fechas fuera del rango permitido
+Mensaje claro indicando el rango de fechas válido
+Solo se permiten fechas hábiles dentro del rango
